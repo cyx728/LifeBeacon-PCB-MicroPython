@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="360" viewBox="0 0 1480 360" role="img" aria-labelledby="title desc">
+  <title id="title">LoRa beacon payload horizontal byte layout</title>
+  <desc id="desc">A horizontal concatenation diagram for one example beacon payload with field names, byte offsets, and example hexadecimal bytes.</desc>
+  <style>
+    .title { font: 700 24px "Segoe UI", Arial, sans-serif; fill: #102030; }
+    .note { font: 13px "Consolas", "Segoe UI", monospace; fill: #314155; }
+    .field { font: 700 13px "Segoe UI", Arial, sans-serif; fill: #102030; }
+    .hex { font: 12px "Consolas", monospace; fill: #0f172a; }
+    .offset { font: 11px "Consolas", monospace; fill: #475569; }
+    .small { font: 11px "Segoe UI", Arial, sans-serif; fill: #334155; }
+    .box { stroke: #1e293b; stroke-width: 1; rx: 6; ry: 6; }
+    .legend { font: 12px "Segoe UI", Arial, sans-serif; fill: #475569; }
+  </style>
+
+  <rect x="0" y="0" width="1480" height="360" fill="#f8fafc"/>
+  <text x="30" y="38" class="title">Example beacon payload: horizontal byte concatenation</text>
+  <text x="30" y="62" class="note">Example values: emergency=warning(0x02), device_id=0x12345678, name="Lambert CHEN", HR=72, SpO2=97, battery=85%, seq=7</text>
+
+  <g transform="translate(30,95)">
+    <rect class="box" x="0" y="0" width="70" height="82" fill="#a7f3d0"/>
+    <text x="35" y="22" text-anchor="middle" class="field">magic</text>
+    <text x="35" y="45" text-anchor="middle" class="hex">4c 42</text>
+    <text x="35" y="66" text-anchor="middle" class="offset">00-01</text>
+
+    <rect class="box" x="70" y="0" width="56" height="82" fill="#bae6fd"/>
+    <text x="98" y="22" text-anchor="middle" class="field">ver</text>
+    <text x="98" y="45" text-anchor="middle" class="hex">01</text>
+    <text x="98" y="66" text-anchor="middle" class="offset">02</text>
+
+    <rect class="box" x="126" y="0" width="56" height="82" fill="#c7d2fe"/>
+    <text x="154" y="22" text-anchor="middle" class="field">type</text>
+    <text x="154" y="45" text-anchor="middle" class="hex">01</text>
+    <text x="154" y="66" text-anchor="middle" class="offset">03</text>
+
+    <rect class="box" x="182" y="0" width="72" height="82" fill="#fecaca"/>
+    <text x="218" y="22" text-anchor="middle" class="field">emg</text>
+    <text x="218" y="45" text-anchor="middle" class="hex">02</text>
+    <text x="218" y="66" text-anchor="middle" class="offset">04</text>
+
+    <rect class="box" x="254" y="0" width="122" height="82" fill="#fed7aa"/>
+    <text x="315" y="22" text-anchor="middle" class="field">device_id_le</text>
+    <text x="315" y="45" text-anchor="middle" class="hex">78 56 34 12</text>
+    <text x="315" y="66" text-anchor="middle" class="offset">05-08</text>
+
+    <rect class="box" x="376" y="0" width="62" height="82" fill="#fde68a"/>
+    <text x="407" y="22" text-anchor="middle" class="field">name_n</text>
+    <text x="407" y="45" text-anchor="middle" class="hex">0c</text>
+    <text x="407" y="66" text-anchor="middle" class="offset">09</text>
+
+    <rect class="box" x="438" y="0" width="295" height="82" fill="#ddd6fe"/>
+    <text x="585" y="22" text-anchor="middle" class="field">name_ascii</text>
+    <text x="585" y="45" text-anchor="middle" class="hex">4c 61 6d 62 65 72 74 20 43 48 45 4e</text>
+    <text x="585" y="66" text-anchor="middle" class="offset">10-21</text>
+
+    <rect class="box" x="733" y="0" width="70" height="82" fill="#bfdbfe"/>
+    <text x="768" y="22" text-anchor="middle" class="field">phy_fl</text>
+    <text x="768" y="45" text-anchor="middle" class="hex">03</text>
+    <text x="768" y="66" text-anchor="middle" class="offset">22</text>
+
+    <rect class="box" x="803" y="0" width="58" height="82" fill="#bbf7d0"/>
+    <text x="832" y="22" text-anchor="middle" class="field">HR</text>
+    <text x="832" y="45" text-anchor="middle" class="hex">48</text>
+    <text x="832" y="66" text-anchor="middle" class="offset">23</text>
+
+    <rect class="box" x="861" y="0" width="62" height="82" fill="#fecdd3"/>
+    <text x="892" y="22" text-anchor="middle" class="field">SpO2</text>
+    <text x="892" y="45" text-anchor="middle" class="hex">61</text>
+    <text x="892" y="66" text-anchor="middle" class="offset">24</text>
+
+    <rect class="box" x="923" y="0" width="62" height="82" fill="#e2e8f0"/>
+    <text x="954" y="22" text-anchor="middle" class="field">phy_r</text>
+    <text x="954" y="45" text-anchor="middle" class="hex">00</text>
+    <text x="954" y="66" text-anchor="middle" class="offset">25</text>
+
+    <rect class="box" x="985" y="0" width="56" height="82" fill="#ccfbf1"/>
+    <text x="1013" y="22" text-anchor="middle" class="field">loc</text>
+    <text x="1013" y="45" text-anchor="middle" class="hex">00</text>
+    <text x="1013" y="66" text-anchor="middle" class="offset">26</text>
+
+    <rect class="box" x="1041" y="0" width="58" height="82" fill="#fef3c7"/>
+    <text x="1070" y="22" text-anchor="middle" class="field">bat</text>
+    <text x="1070" y="45" text-anchor="middle" class="hex">55</text>
+    <text x="1070" y="66" text-anchor="middle" class="offset">27</text>
+
+    <rect class="box" x="1099" y="0" width="58" height="82" fill="#d9f99d"/>
+    <text x="1128" y="22" text-anchor="middle" class="field">seq</text>
+    <text x="1128" y="45" text-anchor="middle" class="hex">07</text>
+    <text x="1128" y="66" text-anchor="middle" class="offset">28</text>
+
+    <rect class="box" x="1157" y="0" width="62" height="82" fill="#fbcfe8"/>
+    <text x="1188" y="22" text-anchor="middle" class="field">RSSI</text>
+    <text x="1188" y="45" text-anchor="middle" class="hex">80</text>
+    <text x="1188" y="66" text-anchor="middle" class="offset">29</text>
+
+    <rect class="box" x="1219" y="0" width="58" height="82" fill="#e5e7eb"/>
+    <text x="1248" y="22" text-anchor="middle" class="field">rsv</text>
+    <text x="1248" y="45" text-anchor="middle" class="hex">00</text>
+    <text x="1248" y="66" text-anchor="middle" class="offset">30</text>
+
+    <rect class="box" x="1277" y="0" width="92" height="82" fill="#fda4af"/>
+    <text x="1323" y="22" text-anchor="middle" class="field">CRC16</text>
+    <text x="1323" y="45" text-anchor="middle" class="hex">7f b4</text>
+    <text x="1323" y="66" text-anchor="middle" class="offset">31-32</text>
+  </g>
+
+  <g transform="translate(30,205)">
+    <text x="0" y="0" class="field">Full example bytes</text>
+    <rect x="0" y="16" width="1369" height="42" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="16" y="43" class="hex">4c 42 01 01 02 78 56 34 12 0c 4c 61 6d 62 65 72 74 20 43 48 45 4e 03 48 61 00 00 55 07 80 00 7f b4</text>
+    <text x="0" y="82" class="legend">CRC16 is calculated over every byte before the CRC field, then stored little-endian. The name segment is variable length; all later offsets move when name_length changes.</text>
+  </g>
+</svg>

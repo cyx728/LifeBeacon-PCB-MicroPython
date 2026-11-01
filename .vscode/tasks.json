@@ -1,0 +1,205 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ESP32: upload vitals.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/vitals.py",
+                ":vitals.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload pcb_config.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/pcb_config.py",
+                ":pcb_config.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload pcb_screen.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/pcb_screen.py",
+                ":pcb_screen.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload pcb_sdcard.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/pcb_sdcard.py",
+                ":pcb_sdcard.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload pcb_runtime.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/pcb_runtime.py",
+                ":pcb_runtime.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload sx1278.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/sx1278.py",
+                ":sx1278.py"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            }
+        },
+        {
+            "label": "ESP32: upload main.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/main.py",
+                ":main.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: reset",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "reset"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: run main.py with logs",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "${workspaceFolder}/.vscode/esp32_run_entry.py",
+                "${config:conrad.serialPort}",
+                "${workspaceFolder}/main.py"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "clear": false
+            },
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "label": "ESP32: upload all files",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ESP32: upload sx1278.py",
+                "ESP32: upload pcb_config.py",
+                "ESP32: upload pcb_screen.py",
+                "ESP32: upload pcb_sdcard.py",
+                "ESP32: upload pcb_runtime.py",
+                "ESP32: upload vitals.py",
+                "ESP32: upload main.py"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: reset and run",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ESP32: reset",
+                "ESP32: run main.py with logs"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32: upload then reset",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ESP32: upload all files",
+                "ESP32: reset and run"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            }
+        }
+    ]
+}

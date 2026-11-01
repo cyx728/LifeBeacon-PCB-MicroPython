@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ESP32: upload then reset",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/.vscode/esp32_run_entry.py",
+            "console": "integratedTerminal",
+            "purpose": [
+                "debug-in-terminal"
+            ],
+            "preLaunchTask": "ESP32: upload all files",
+            "args": ["${config:conrad.serialPort}", "${workspaceFolder}/main.py"],
+            "justMyCode": false
+        }
+    ]
+}
