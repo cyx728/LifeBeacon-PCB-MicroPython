@@ -1,9 +1,10 @@
 """100 Hz PPG processing adapted from hr/spo2/anc C reference.
 
-Lightweight time-domain quality gates replace ESP-DSP FFT SQI. Not calibrated
-medical measurements; A=110, B=25 must be fitted on the assembled sensor.
+Includes C ANC/HR/SpO2/SQI functionality with bounded FFT update rate.
+Not calibrated medical measurements; A=110, B=25 require sensor calibration.
 """
 import math
+from ppg_quality import Quality
 
 
 class Vitals:
@@ -16,6 +17,10 @@ class Vitals:
         self.weights = [[0.0] * 16 for _ in range(2)]
         self.ref = [0.0] * 16
         self.red, self.ir, self.peaks = [], [], []
+        self.raw_red, self.raw_ir = [], []
+        self.sqi = Quality()
+        self.last_valid = None
+        self.hr_candidate = None
         self.index = 0
         self.last_peak = None
         self.rri = None
@@ -40,6 +45,11 @@ class Vitals:
             self.quality = 'motion artifact'
             return
         self.clean += 1
+        self.raw_red.append(red)
+        self.raw_ir.append(ir)
+        if len(self.raw_ir) > 200:
+            self.raw_red.pop(0)
+            self.raw_ir.pop(0)
         self.ref.insert(0, motion if motion is not None else 0.0)
         self.ref.pop()
         energy = 1e-6 + sum(x*x for x in self.ref)
@@ -67,21 +77,23 @@ class Vitals:
         low, high = min(self.ir[-100:]), max(self.ir[-100:])
         amplitude = high-low
         above = signals[1] > low+0.6*amplitude
-        if above and not self.above and amplitude/self.dc[1] > 0.001:
+        if self.clean >= 500 and above and not self.above and amplitude/self.dc[1] > 0.001:
             if self.last_peak is not None:
                 interval = self.index-self.last_peak
                 if 25 <= interval <= 200 and (self.rri is None or 0.6 <= interval/self.rri <= 1.7):
                     self.rri = interval
                     self.peaks.append(interval)
                     self.peaks = self.peaks[-8:]
-                    self.bpm = round(6000/(sum(self.peaks)/len(self.peaks)))
+                    self.hr_candidate = round(6000/(sum(self.peaks)/len(self.peaks)))
+                    self.last_valid = self.index
             self.last_peak = self.index
         self.above = above
         if self.last_peak is None or self.index-self.last_peak > 300:
             self.bpm = None
+            self.hr_candidate = None
             self.rri = None
             self.peaks = []
-        if self.index % 25:
+        if self.index % 100:
             return
         ir_ac = max(self.ir)-min(self.ir)
         red_ac = max(self.red)-min(self.red)
@@ -91,7 +103,15 @@ class Vitals:
         good = pi > 0.001 and norm > 0 and correlation/norm > 0.7
         ratio = (red_ac/self.dc[0])/pi if pi else 0
         estimate = 110-25*ratio
+        # C SpO2: raw red/IR DC and peak-to-peak ratios over 200 samples.
+        red_dc = sum(self.raw_red)/len(self.raw_red)
+        ir_dc = sum(self.raw_ir)/len(self.raw_ir)
+        red_ac = max(self.raw_red)-min(self.raw_red)
+        ir_ac = max(self.raw_ir)-min(self.raw_ir)
+        ratio = (red_ac/red_dc)/(ir_ac/ir_dc) if ir_ac > 0 else 0
+        estimate = 110-25*ratio
+        age = (self.index-(self.last_valid or 0))/100
+        good = self.sqi.evaluate(self.raw_ir, motion, self.peaks, age) and good
+        self.bpm = self.hr_candidate if good else None
         self.spo2 = round(estimate) if good and 0.4 <= ratio <= 3 and 70 <= estimate <= 100 else None
-        if not good:
-            self.bpm = None
-        self.quality = 'optical OK; motion unverified' if good and motion is None else ('OK' if good else 'low SQI')
+        self.quality = ('OK; motion unverified' if motion is None else 'OK') if good else 'PPGLOSS'

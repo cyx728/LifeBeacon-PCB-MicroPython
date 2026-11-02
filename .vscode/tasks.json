@@ -2,6 +2,23 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "ESP32: upload ppg_quality.py",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "-3.11",
+                "-m",
+                "mpremote",
+                "connect",
+                "${config:conrad.serialPort}",
+                "fs",
+                "cp",
+                "${workspaceFolder}/ppg_quality.py",
+                ":ppg_quality.py"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "ESP32: upload vitals.py",
             "type": "process",
             "command": "py",
@@ -164,6 +181,7 @@
             "label": "ESP32: upload all files",
             "dependsOrder": "sequence",
             "dependsOn": [
+                "ESP32: upload ppg_quality.py",
                 "ESP32: upload sx1278.py",
                 "ESP32: upload pcb_config.py",
                 "ESP32: upload pcb_screen.py",

@@ -199,20 +199,18 @@ def sample_max30102(i2c, max_samples=32, motion=None):
     count = min(_max30102_fifo_count(i2c), max_samples)
     if count <= 0:
         return 0, heart_state["last_ir"]
-    now = time.ticks_ms()
+    fifo = i2c.readfrom_mem(MAX30102_ADDR, 0x07, count * 6)
     for index in range(count):
-        raw = i2c.readfrom_mem(MAX30102_ADDR, 0x07, 6)
+        raw = fifo[index*6:index*6+6]
         # In SpO2 mode each channel is a settings-bit 18-bit sample.
         red_value = ((raw[0] << 16) | (raw[1] << 8) | raw[2]) & 0x03FFFF
         ir_value = ((raw[3] << 16) | (raw[4] << 8) | raw[5]) & 0x03FFFF
-        sample_time = time.ticks_add(
-            now, -((count - index - 1) * MAX30102_SAMPLE_PERIOD_MS)
-        )
         vitals.update(red_value, ir_value, motion)
         heart_state['last_ir'] = ir_value
         heart_state['sample_count'] += 1
-        heart_state['bpm'], heart_state['spo2'] = vitals.bpm, vitals.spo2
-        heart_state['quality'] = vitals.quality
+    heart_state['bpm'], heart_state['spo2'] = vitals.bpm, vitals.spo2
+    heart_state['quality'] = vitals.quality
+    heart_state['sqi'] = dict(vitals.sqi.metrics)
     return count, heart_state["last_ir"]
 
 

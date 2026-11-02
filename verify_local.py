@@ -5,8 +5,16 @@ import math
 from pathlib import Path
 import struct
 from vitals import Vitals
+from ppg_quality import Quality, spectral_snr
 
 root = Path(__file__).resolve().parent
+wave = [50000+1000*math.sin(2*math.pi*1.2*n/100) for n in range(200)]
+assert spectral_snr(wave) > 0.8
+q = Quality()
+assert q.evaluate(wave, 0.0, [83,84,83,84], 0)
+assert not q.evaluate(wave, 0.1, [83,84,83,84], 0)
+assert not q.evaluate(wave, 0.0, [83,84,83,84], 60)
+assert not q.evaluate([50000]*200, 0.0, [], 0)
 v = Vitals()
 for n in range(1500):
     pulse = math.sin(2*math.pi*1.2*n/100)

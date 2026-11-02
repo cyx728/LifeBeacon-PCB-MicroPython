@@ -74,6 +74,7 @@ class Runtime:
         self.periodic_tx_active = False
         self.adc = None
         self.motion_ref = None
+        self.acc_mean = 1.0
 
     def touch_edge(self, pin):
         # IRQ callback: latch only, never I2C/print/allocate.
@@ -206,6 +207,7 @@ class Runtime:
     def invalidate_health(self):
         self.api['vitals'].reset()
         s = self.api['heart_state']
+        s['quality'], s['sqi'] = 'PPGLOSS/reset', {}
         s.update({'bpm': None, 'spo2': None, 'last_peak_ms': None,
                   'baseline': 0, 'amplitude': 0, 'above': False,
                   'red_sum': 0, 'ir_sum': 0, 'red_min': 0x3FFFF,
@@ -237,7 +239,9 @@ class Runtime:
                 self.mpu_data = (ax / 16384, ay / 16384, az / 16384,
                                  gx / 131, gy / 131, gz / 131, temp / 340 + 36.53)
                 self.mpu_alive_ms = time.ticks_ms()
-                self.motion_ref = (self.mpu_data[0]**2 + self.mpu_data[1]**2 + self.mpu_data[2]**2)**0.5 - 1.0
+                magnitude = (self.mpu_data[0]**2 + self.mpu_data[1]**2 + self.mpu_data[2]**2)**0.5
+                self.acc_mean += 0.01 * (magnitude-self.acc_mean)
+                self.motion_ref = magnitude-self.acc_mean
                 time.sleep_ms(20)
         except Exception as exc:
             self.mpu_status = (False, repr(exc))
@@ -514,6 +518,7 @@ class Runtime:
             self.log('[max] samples=%d IR=%d HR=%s SpO2=%s emergency=%d INT=%d' %
                      (sample_count, ir, phy[0] if flags & 1 else '--', phy[1] if flags & 2 else '--', emergency, self.hr_irq.value()))
             self.log('[max] quality=%s' % self.api['heart_state'].get('quality', 'warming'))
+            self.log('[max] SQI=%s' % self.api['heart_state'].get('sqi', {}))
             if self.mpu_data is not None and self.mpu_alive_ms is not None and time.ticks_diff(time.ticks_ms(), self.mpu_alive_ms) < 1000:
                 self.log('[mpu] a(g)=%.2f,%.2f,%.2f gyro(d/s)=%.1f,%.1f,%.1f T=%.1f INT=%d' % (self.mpu_data + (self.mpu_irq.value(),)))
             mv = self.attempt('battery', lambda: self.api['battery_mv'](adc)) if adc else None
